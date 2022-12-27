@@ -16,6 +16,6 @@ class Graphics{
       }
       Console.WriteLine(); //next line
     }
-    Console.SetCursorPosition(0, 0);
+    Console.SetCursorPosition(0, 2);
   }
 }
