@@ -3,30 +3,37 @@ class Game
 {
   Graphics graphics = new Graphics();
   List<List<Cell>> _field = new List<List<Cell>>();
-  int _heighth = 10;
-  int _width = 10;
+  int _heighth = 40;
+  int _width = 40;
   public void Run(){
     Console.WriteLine();
     GenerateField();
     while (true){
       graphics.Draw(_field);
       Move();
+
+      if(Console.KeyAvailable == true){
+        if(Console.ReadKey().Key == ConsoleKey.Escape){
+          Console.SetCursorPosition(0, _heighth+2);
+          break;
+        }
+      }
       System.Threading.Thread.Sleep(1000);    
     }
   }
 
-  void GenerateField(){ //generate demo field
+  void GenerateField(){
 
     List<Cell> alive_cells = InputParse();
 
-    for(int x = 0; x < 10; x++){
+    for(int y = 0; y < _heighth; y++){
       _field.Add(new List<Cell>());
-      for(int y = 0; y < 10; y++){
+      for(int x = 0; x < _width; x++){
         if(IsAlive(alive_cells, x, y)){
-          _field[x].Add(new Cell(true));
+          _field[y].Add(new Cell(true));
         }
         else{
-          _field[x].Add(new Cell(false));
+          _field[y].Add(new Cell(false));
         }
       }
     }
@@ -87,15 +94,15 @@ class Game
   }
 
   void AddNeighbor(int x, int y){
-    if((x>0 && x < _width) && (y>0 && y < _heighth)){
-      _field[x][y].Amount_neighbors += 1;
+    if((x>=0 && x < _width) && (y>=0 && y < _heighth)){
+      _field[y][x].Amount_neighbors += 1;
     }
   }
 
   void CountNeighbors(){
-    for(int x = 0; x < _field.Count(); x++){
-      for(int y = 0; y < _field[0].Count(); y++){
-        if(_field[x][y].IsAlive()){
+    for(int y = 0; y < _heighth; y++){
+      for(int x = 0; x < _width; x++){
+        if(_field[y][x].IsAlive()){
           AddNeighbors(x, y);
         }
       }
@@ -107,15 +114,15 @@ class Game
   {
     CountNeighbors();
 
-    for(int x = 0; x < _field.Count(); x++){
-      for(int y = 0; y < _field[0].Count(); y++){
-      if(_field[x][y].IsAlive() == false && _field[x][y].Amount_neighbors == 3){
-        _field[x][y].SetStatus(true);
+    for(int y = 0; y < _heighth; y++){
+      for(int x = 0; x < _width; x++){
+      if(_field[y][x].IsAlive() == false && _field[y][x].Amount_neighbors == 3){
+        _field[y][x].SetStatus(true);
       }
-      else if(_field[x][y].IsAlive() == true && (_field[x][y].Amount_neighbors < 2 || _field[x][y].Amount_neighbors > 3)){
-        _field[x][y].SetStatus(false);
+      else if(_field[y][x].IsAlive() == true && (_field[y][x].Amount_neighbors < 2 || _field[y][x].Amount_neighbors > 3)){
+        _field[y][x].SetStatus(false);
       }
-      _field[x][y].Amount_neighbors = 0;
+      _field[y][x].Amount_neighbors = 0;
     }
     }
 
