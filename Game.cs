@@ -1,8 +1,10 @@
 
 class Game
 {
-  static Graphics graphics = new Graphics();
-  static List<List<Cell>> _field = new List<List<Cell>>();
+  Graphics graphics = new Graphics();
+  List<List<Cell>> _field = new List<List<Cell>>();
+  int _heighth = 10;
+  int _width = 10;
   public void Run(){
     Console.WriteLine();
     GenerateField();
@@ -15,7 +17,7 @@ class Game
 
   void GenerateField(){ //generate demo field
 
-    List<Cell> alive_cells = GetAliveCells();
+    List<Cell> alive_cells = InputParse();
 
     for(int x = 0; x < 10; x++){
       _field.Add(new List<Cell>());
@@ -30,7 +32,7 @@ class Game
     }
   }
 
-  List<Cell> GetAliveCells(){
+  List<Cell> InputParse(){
     string input = Console.ReadLine();
     List<Cell> cells = new List<Cell>();
 
@@ -55,8 +57,68 @@ class Game
     return false;
   }
 
-  void Move(){
-    List<Cell> alive_cells = GetAliveCells();
-//    List<Cell> 
+
+  void AddNeighbors(int x, int y){
+    x -= 1; y -=1;
+    AddNeighbor(x, y);
+
+    x += 1;
+    AddNeighbor(x, y);
+
+    x += 1;
+    AddNeighbor(x, y);
+
+    y +=1;
+    AddNeighbor(x, y);
+
+    y +=1;
+    AddNeighbor(x, y);
+
+    x -= 1;
+    AddNeighbor(x, y);
+
+    x -= 1;
+    AddNeighbor(x, y);
+
+    y -=1;
+    AddNeighbor(x, y);
+
+    
+  }
+
+  void AddNeighbor(int x, int y){
+    if((x>0 && x < _width) && (y>0 && y < _heighth)){
+      _field[x][y].Amount_neighbors += 1;
+    }
+  }
+
+  void CountNeighbors(){
+    for(int x = 0; x < _field.Count(); x++){
+      for(int y = 0; y < _field[0].Count(); y++){
+        if(_field[x][y].IsAlive()){
+          AddNeighbors(x, y);
+        }
+      }
+    }
+    
+  }
+
+  void Move()
+  {
+    CountNeighbors();
+
+    for(int x = 0; x < _field.Count(); x++){
+      for(int y = 0; y < _field[0].Count(); y++){
+      if(_field[x][y].IsAlive() == false && _field[x][y].Amount_neighbors == 3){
+        _field[x][y].SetStatus(true);
+      }
+      else if(_field[x][y].IsAlive() == true && (_field[x][y].Amount_neighbors < 2 || _field[x][y].Amount_neighbors > 3)){
+        _field[x][y].SetStatus(false);
+      }
+      _field[x][y].Amount_neighbors = 0;
+    }
+    }
+
+
   }
 }
